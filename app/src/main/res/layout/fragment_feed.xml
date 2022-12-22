@@ -57,5 +57,23 @@
         android:focusable="true"
         android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_add_24dp" />
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/updateFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/fab_margin"
+        android:clickable="true"
+        android:contentDescription="@string/update"
+        android:focusable="true"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:text="@string/newPosts"
+        app:icon="@drawable/ic_baseline_arrow_upward_24"
+        android:visibility="gone"
+        />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -100,6 +100,19 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
+        binding.updateFab.setOnClickListener {
+            viewModel.refreshPosts()
+            binding.updateFab.isVisible = false
+            viewModel.newerCount.value?.let { it1 -> binding.list.smoothScrollToPosition(it1) }
+
+        }
+
+        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+            if (state != null) {
+                binding.updateFab.isVisible = true
+            }
+        }
+
         return binding.root
     }
 }

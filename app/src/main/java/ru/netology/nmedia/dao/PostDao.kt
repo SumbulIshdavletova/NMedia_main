@@ -1,6 +1,5 @@
 package ru.netology.nmedia.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -22,15 +21,23 @@ interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(posts: List<PostEntity>)
 
+    @Query("SELECT COUNT(*)  FROM PostEntity WHERE show = 0")
+    suspend fun count(): Int
+
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)
 
-    @Query("""
+    @Query(
+        """
         UPDATE PostEntity SET
         likes = likes + CASE WHEN likedByMe THEN -1 ELSE 1 END,
         likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
         WHERE id = :id
-        """)
+        """
+    )
     suspend fun likeById(id: Long)
+
+    @Query("UPDATE PostEntity SET show = 1 WHERE show = 0")
+    suspend fun update()
 
 }

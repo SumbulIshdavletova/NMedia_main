@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
+import ru.netology.nmedia.activity.FullImageFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -57,6 +58,14 @@ class FeedFragment : Fragment() {
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
             }
+
+            override fun onFullImage(post: Post) {
+                findNavController().navigate(R.id.action_feedFragment_to_fullImageFragment,
+                Bundle().apply {
+                    textArg = post.attachment?.url
+                })
+            }
+
         })
 
         binding.list.adapter = adapter
@@ -101,12 +110,15 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
-        binding.updateFab.setOnClickListener {
-            viewModel.refreshPosts()
-            binding.updateFab.isVisible = false
-
+        viewModel.newerCount.observe(viewLifecycleOwner) {
+            if (viewModel.newerCount.value!! > 0) {
+                binding.updateFab.isVisible = true
+            }
         }
-
+        binding.updateFab.setOnClickListener {
+            viewModel.update()
+            binding.updateFab.isVisible = false
+        }
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {
@@ -114,12 +126,6 @@ class FeedFragment : Fragment() {
                 }
             }
         })
-
-        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            if (state != null) {
-                binding.updateFab.isVisible = true
-            }
-        }
 
         return binding.root
     }

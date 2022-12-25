@@ -24,4 +24,10 @@
     <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
     <string name="channel_remote_name">Уведомления с сервера</string>
     <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="update" />
+    <string name="newPosts" />
+    <string name="save_new_post_menu">save</string>
+    <string name="photo_attachment">Photo Attachment</string>
+    <string name="remove">REMOVE</string>
+    <string name="attachment">Image attachment</string>
 </resources>

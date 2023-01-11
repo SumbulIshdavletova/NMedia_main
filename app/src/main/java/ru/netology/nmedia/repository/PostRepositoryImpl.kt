@@ -23,9 +23,12 @@ import ru.netology.nmedia.error.UnknownError
 import java.io.File
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
+
+
     override val data = dao.getAll()
         .map(List<PostEntity>::toDto)
         .flowOn(Dispatchers.Default)
+
 
     override suspend fun getAll() {
         try {
@@ -42,6 +45,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
+
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
             delay(10_000L)
@@ -57,13 +61,13 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
+
     override suspend fun update() {
         try {
             val response = PostsApi.service.getAll()
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            //   val body = response.body() ?: throw ApiError(response.code(), response.message())
             if (dao.count() > 0) {
                 dao.update()
             }
@@ -73,6 +77,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
 
     override suspend fun save(post: Post) {
         try {
@@ -89,6 +94,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
+
     override suspend fun removeById(id: Long) {
         try {
             val response = PostsApi.service.removeById(id)
@@ -102,6 +108,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
 
     override suspend fun likeById(id: Long) {
         try {
@@ -117,6 +124,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
+
     override suspend fun unlikeById(id: Long) {
         try {
             val response = PostsApi.service.dislikeById(id)
@@ -130,6 +138,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
 
     override suspend fun saveWithAttachment(post: Post, file: File) {
         try {
@@ -160,4 +169,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
+
 }

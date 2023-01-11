@@ -4,10 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -19,12 +15,6 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val bundle = bundleOf("name" to 0)
-//
-//        supportFragmentManager.commit {
-//            setReorderingAllowed(true)
-//            add<FullImageFragment>(R.id.fragment_container_view_image)
-//        }
 
         intent?.let {
             if (it.action != Intent.ACTION_SEND) {
@@ -46,9 +36,12 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                 )
         }
 
-        lifecycleScope
+       // lifecycleScope
 
         checkGoogleApiAvailability()
+
+
+
     }
 
     private fun checkGoogleApiAvailability() {

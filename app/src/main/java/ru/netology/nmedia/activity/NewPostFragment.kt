@@ -83,6 +83,7 @@ class NewPostFragment : Fragment() {
                 .compress(2048)
                 .createIntent(contract::launch)
         }
+
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .cameraOnly()

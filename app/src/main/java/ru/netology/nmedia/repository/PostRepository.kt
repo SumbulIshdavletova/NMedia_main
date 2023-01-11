@@ -17,4 +17,6 @@ interface PostRepository {
     suspend fun saveWithAttachment(post: Post, file: File)
     suspend fun upload(file: File): Media
     suspend fun update()
+
+
 }

@@ -13,6 +13,8 @@ data class Post(
     val likes: Int = 0,
     val show: Boolean = true,
     val attachment: Attachment? = null,
+    val authorId: Long = 0,
+    val ownedByMe: Boolean = false,
 )
 
 data class PhotoModel(

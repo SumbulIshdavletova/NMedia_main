@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
-import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.view.loadCircleCrop
@@ -53,7 +52,7 @@ class PostViewHolder(
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"
 
-            if (post.attachment?.url!=null) {
+            if (post.attachment?.url != null) {
                 attachment.isVisible = true
                 val url = "${BuildConfig.BASE_URL}/media/${post.attachment.url}"
                 Glide.with(attachment)
@@ -68,6 +67,7 @@ class PostViewHolder(
                 onInteractionListener.onFullImage(post)
             }
 
+            menu.isVisible = post.ownedByMe
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)

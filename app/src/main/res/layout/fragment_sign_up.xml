@@ -1,12 +1,15 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_container_view_sign_up"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/userLogin"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="@string/login"
         android:hint="@string/login"
@@ -16,10 +19,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <EditText
         android:id="@+id/userName"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:autofillHints="@string/name"
@@ -31,7 +33,7 @@
 
     <EditText
         android:id="@+id/userPassword"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="@string/password"
         android:hint="@string/password"
@@ -42,7 +44,7 @@
 
     <EditText
         android:id="@+id/userPasswordConfirm"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="@string/password"
         android:hint="@string/password_confirm"
@@ -50,6 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userPassword" />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addAvatar"
@@ -66,10 +69,10 @@
         android:id="@+id/sighUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="@dimen/common_spacing"
+        android:gravity="center"
         android:text="@string/sign_up_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addAvatar" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

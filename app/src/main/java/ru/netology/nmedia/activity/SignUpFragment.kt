@@ -12,10 +12,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
-import ru.netology.nmedia.databinding.FragmentSignInBinding
 import ru.netology.nmedia.databinding.FragmentSignUpBinding
 import ru.netology.nmedia.view.AuhtViewModel
-import ru.netology.nmedia.view.SignInViewModel
 import ru.netology.nmedia.view.SignUpViewModel
 
 class SignUpFragment : Fragment() {

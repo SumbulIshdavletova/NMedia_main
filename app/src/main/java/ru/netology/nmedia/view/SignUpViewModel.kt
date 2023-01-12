@@ -57,7 +57,7 @@ class SignUpRepository {
 
         try {
             val data = MultipartBody.Part.createFormData(
-                "media", file.name, file.asRequestBody()
+                "file", file.name, file.asRequestBody()
             )
             val response = PostsApi.service.registerWithPhoto(
                 login.toRequestBody("text/plain".toMediaType()),

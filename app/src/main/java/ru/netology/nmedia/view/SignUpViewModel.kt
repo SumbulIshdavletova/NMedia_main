@@ -9,7 +9,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.api.Api
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
@@ -59,7 +59,7 @@ class SignUpRepository {
             val data = MultipartBody.Part.createFormData(
                 "file", file.name, file.asRequestBody()
             )
-            val response = PostsApi.service.registerWithPhoto(
+            val response = Api.service.registerWithPhoto(
                 login.toRequestBody("text/plain".toMediaType()),
                 pass.toRequestBody("text/plain".toMediaType()),
                 name.toRequestBody("text/plain".toMediaType()),

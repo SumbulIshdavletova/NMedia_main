@@ -27,8 +27,8 @@ class SignInFragment : Fragment() {
 
         binding.sighInButton.setOnClickListener {
             signInViewModel.updateUser(
-                binding.usedLogin.toString(),
-                binding.usedPassword.toString()
+                binding.usedLogin.editText?.text.toString(),
+                binding.usedPassword.editText?.text.toString()
             )
         }
 

@@ -2,8 +2,17 @@ package ru.netology.nmedia.auth
 
 import android.content.Context
 import androidx.core.content.edit
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.dto.PushToken
 
 class AppAuth private constructor(context: Context) {
 
@@ -20,7 +29,7 @@ class AppAuth private constructor(context: Context) {
             "init() must called before getInstance()"
         }
 
-        fun init (context: Context) {
+        fun init(context: Context) {
             INSTANCE = AppAuth(context)
         }
     }
@@ -35,21 +44,39 @@ class AppAuth private constructor(context: Context) {
         } else {
             MutableStateFlow(AuthState(id, token))
         }
+        sendPushToken()
     }
+
     val state = _state.asStateFlow()
 
     @Synchronized
-    fun setAuth(id: Long, token: String) { //передать сюда данные с viewModel для отдельного фрагмента авторизации
+    fun setAuth(
+        id: Long,
+        token: String
+    ) {
         prefs.edit {
             putLong(ID_KEY, id)
             putString(TOKEN_KEY, token)
         }
         _state.value = AuthState(id, token)
+        sendPushToken()
     }
 
     @Synchronized
     fun removeAuth() {
         prefs.edit { clear() }
         _state.value = null
+        sendPushToken()
+    }
+
+    fun sendPushToken(token: String? = null) {
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val pushToken = PushToken(token ?: Firebase.messaging.token.await())
+                Api.service.sendPushToken(pushToken)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }

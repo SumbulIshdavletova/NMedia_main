@@ -10,6 +10,8 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.R
+import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.auth.AppAuth
 import kotlin.random.Random
 
 
@@ -34,16 +36,40 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
+        val userId = AppAuth.getInstance().state.value?.id
+        val cont = gson.fromJson(message.data[content], MSG::class.java)
+
+     handleId(userId, cont)
 
         message.data[action]?.let {
-           when (Action.valueOf(it)) {
-              Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
-           }
+            val conte = gson.fromJson(message.data[content], Like::class.java)
+            when (Action.valueOf(it)) {
+                Action.LIKE -> handleLike(conte)
+            }
         }
     }
 
     override fun onNewToken(token: String) {
-        println(token)
+        AppAuth.getInstance().sendPushToken(token)
+    }
+
+    private fun handleId(userId: Long?, date: MSG?) {
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(
+                date?.content
+            )
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+            when {
+                userId == date?.recipientId || date?.recipientId == null -> NotificationManagerCompat.from(
+                    this
+                ).notify(Random.nextInt(100_000), notification)
+
+                date?.recipientId == 0L || date?.recipientId != 0L || date?.recipientId != userId -> AppAuth.getInstance()
+                    .sendPushToken()
+            }
     }
 
     private fun handleLike(content: Like) {
@@ -62,10 +88,13 @@ class FCMService : FirebaseMessagingService() {
         NotificationManagerCompat.from(this)
             .notify(Random.nextInt(100_000), notification)
     }
+
+
 }
 
 enum class Action {
     LIKE,
+
 }
 
 data class Like(
@@ -75,3 +104,4 @@ data class Like(
     val postAuthor: String,
 )
 
+data class MSG(val recipientId: Long?, val content: String)

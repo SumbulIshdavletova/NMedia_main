@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -15,6 +14,7 @@ import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         intent?.let {
             if (it.action != Intent.ACTION_SEND) {
@@ -36,9 +36,12 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                 )
         }
 
-        lifecycleScope
+       // lifecycleScope
 
         checkGoogleApiAvailability()
+
+
+
     }
 
     private fun checkGoogleApiAvailability() {

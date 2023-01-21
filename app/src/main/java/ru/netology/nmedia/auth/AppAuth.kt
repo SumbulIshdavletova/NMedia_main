@@ -59,15 +59,6 @@ class AppAuth @Inject constructor(
         fun getApiService(): ApiService
     }
 
-//    private fun getApiService(context: Context): ApiService {
-//        val hiltEntryPoint = EntryPointAccessors.fromApplication(
-//            context,
-//            AppAuthEntryPoint::class.java
-//        )
-//        return hiltEntryPoint.apiService()
-//    }
-
-
     @Synchronized
     fun setAuth(
         id: Long,
@@ -98,20 +89,11 @@ class AppAuth @Inject constructor(
                 val pushToken = PushToken(token ?: Firebase.messaging.token.await())
            val entryPoint =  EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
                entryPoint.getApiService().sendPushToken(pushToken)
-      //         getApiService(context).sendPushToken(pushToken)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-//    private fun getApiService(context: Context): ApiService {
-//
-//        val hiltEntryPoint = EntryPointAccessors.fromApplication(
-//            context,
-//            AppAuthEntryPoint::class.java
-//        )
-//        return hiltEntryPoint.apiService()
-//    }
 }
 

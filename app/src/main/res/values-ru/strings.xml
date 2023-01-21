@@ -24,4 +24,21 @@
     <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
     <string name="channel_remote_name">Уведомления с сервера</string>
     <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="update" />
+    <string name="newPosts" />
+    <string name="save_new_post_menu">save</string>
+    <string name="photo_attachment">Photo Attachment</string>
+    <string name="remove">REMOVE</string>
+    <string name="attachment">Image attachment</string>
+    <string name="sign_in">Войти</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="log_out">Выйти</string>
+    <string name="login">Логин</string>
+    <string name="name">Имя</string>
+    <string name="password">Пароль</string>
+    <string name="password_confirm">Подтвердить пароль</string>
+    <string name="sign_in_button">Войти</string>
+    <string name="sign_up_button">Зарегистрироваться</string>
+    <string name="add_avatar">Добавить аватар</string>
+    <string name="alert_dialog">Зарегистрируйтесь для добавления нового поста</string>
 </resources>

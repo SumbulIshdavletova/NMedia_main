@@ -3,27 +3,36 @@ package ru.netology.nmedia.view
 
 import android.net.Uri
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.viewmodel.PhotoModel
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
 private val noPhoto = PhotoModel(null, null)
 
-class SignUpViewModel : ViewModel() {
-    private val repository = SignUpRepository()
+@HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
+class SignUpViewModel @Inject constructor(
+    private val repository: SignUpRepository,
+    appAuth: AppAuth,
+) : ViewModel() {
 
-    val state = AppAuth.getInstance().state
+
+    val state = appAuth.state
         .asLiveData()
     val authorized: Boolean
         get() = state.value != null
@@ -50,8 +59,12 @@ class SignUpViewModel : ViewModel() {
     }
 }
 
-
-class SignUpRepository {
+@Singleton
+class SignUpRepository@Inject constructor
+    (
+    private val apiService: ApiService,
+    private val appAuth: AppAuth,
+) {
 
     suspend fun update(login: String, pass: String, name: String, file: File) {
 
@@ -59,7 +72,7 @@ class SignUpRepository {
             val data = MultipartBody.Part.createFormData(
                 "file", file.name, file.asRequestBody()
             )
-            val response = Api.service.registerWithPhoto(
+            val response = apiService.registerWithPhoto(
                 login.toRequestBody("text/plain".toMediaType()),
                 pass.toRequestBody("text/plain".toMediaType()),
                 name.toRequestBody("text/plain".toMediaType()),
@@ -69,7 +82,7 @@ class SignUpRepository {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            AppAuth.getInstance().setAuth(body.id, body.token)
+            body.token?.let { appAuth.setAuth(body.id, it) }
         } catch (e: java.io.IOException) {
             throw NetworkError
         } catch (e: Exception) {

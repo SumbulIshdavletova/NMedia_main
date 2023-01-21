@@ -9,17 +9,21 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
-import ru.netology.nmedia.api.Api
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 import kotlin.random.Random
 
-
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
     private val channelId = "remote"
     private val gson = Gson()
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     override fun onCreate() {
         super.onCreate()
@@ -36,10 +40,10 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val userId = AppAuth.getInstance().state.value?.id
+        val userId = appAuth.state.value?.id
         val cont = gson.fromJson(message.data[content], MSG::class.java)
 
-     handleId(userId, cont)
+        handleId(userId, cont)
 
         message.data[action]?.let {
             val conte = gson.fromJson(message.data[content], Like::class.java)
@@ -50,45 +54,38 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken(token)
+        appAuth.sendPushToken(token)
     }
 
     private fun handleId(userId: Long?, date: MSG?) {
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(
-                date?.content
-            )
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
+        val notification =
+            NotificationCompat.Builder(this, channelId).setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(
+                    date?.content
+                ).setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
 
-            when {
-                userId == date?.recipientId || date?.recipientId == null -> NotificationManagerCompat.from(
-                    this
-                ).notify(Random.nextInt(100_000), notification)
+        when {
+            userId == date?.recipientId || date?.recipientId == null -> NotificationManagerCompat.from(
+                this
+            ).notify(Random.nextInt(100_000), notification)
 
-                date?.recipientId == 0L || date?.recipientId != 0L || date?.recipientId != userId -> AppAuth.getInstance()
-                    .sendPushToken()
-            }
+            date?.recipientId == 0L || date?.recipientId != 0L || date?.recipientId != userId -> appAuth.sendPushToken()
+        }
     }
 
     private fun handleLike(content: Like) {
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(
-                getString(
-                    R.string.notification_user_liked,
-                    content.userName,
-                    content.postAuthor,
-                )
-            )
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
+        val notification =
+            NotificationCompat.Builder(this, channelId).setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(
+                    getString(
+                        R.string.notification_user_liked,
+                        content.userName,
+                        content.postAuthor,
+                    )
+                ).setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
 
-        NotificationManagerCompat.from(this)
-            .notify(Random.nextInt(100_000), notification)
+        NotificationManagerCompat.from(this).notify(Random.nextInt(100_000), notification)
     }
-
 
 }
 

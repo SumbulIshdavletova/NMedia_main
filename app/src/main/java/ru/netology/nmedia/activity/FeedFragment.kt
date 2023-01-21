@@ -12,22 +12,30 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.FullImageFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
-import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.view.AuhtViewModel
+import ru.netology.nmedia.view.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
 
-    private val viewModel: PostViewModel by activityViewModels()
-    val authViewModel: AuhtViewModel by viewModels()
+    @Inject
+    lateinit var appAuth: AppAuth
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val viewModel: PostViewModel by activityViewModels()
+    val authViewModel: AuthViewModel by viewModels()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -146,7 +154,7 @@ class FeedFragment : Fragment() {
 
         var menuProvider: MenuProvider? = null
 
-        authViewModel.state.observe(viewLifecycleOwner) {
+        authViewModel.data.observe(viewLifecycleOwner) {
 
             binding.fab.setOnClickListener {
                 if (authViewModel.authorized) {
@@ -180,7 +188,7 @@ class FeedFragment : Fragment() {
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                     when (menuItem.itemId) {
                         R.id.logout -> {
-                            AppAuth.getInstance().removeAuth()
+                            appAuth.removeAuth()
                             true
                         }
                         R.id.signIn -> {
@@ -197,6 +205,8 @@ class FeedFragment : Fragment() {
                 menuProvider = this
             }, viewLifecycleOwner)
         }
+
+
 
         return binding.root
     }

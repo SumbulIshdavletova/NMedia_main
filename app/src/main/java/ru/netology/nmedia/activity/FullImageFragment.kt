@@ -7,12 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentFullImageBinding
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+
+@AndroidEntryPoint
 class FullImageFragment : Fragment() {
 
     companion object {
@@ -22,10 +26,10 @@ class FullImageFragment : Fragment() {
     private var _binding: FragmentFullImageBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val viewModel: PostViewModel by viewModels()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

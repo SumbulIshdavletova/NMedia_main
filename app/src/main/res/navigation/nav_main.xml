@@ -17,10 +17,34 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_feedFragment_to_fullImageFragment"
+            app:destination="@id/fullImageFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_singInFragment"
+            app:destination="@id/singInFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
     </fragment>
     <fragment
         android:id="@+id/newPostFragment"
         android:name="ru.netology.nmedia.activity.NewPostFragment"
         android:label="fragment_new_post"
         tools:layout="@layout/fragment_new_post" />
+    <fragment
+        android:id="@+id/fullImageFragment"
+        android:name="ru.netology.nmedia.activity.FullImageFragment"
+        android:label="fragment_full_image2"
+        tools:layout="@layout/fragment_full_image" />
+    <fragment
+        android:id="@+id/singInFragment"
+        android:name="ru.netology.nmedia.activity.SignInFragment"
+        android:label="SingInFragment" />
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="ru.netology.nmedia.activity.SignUpFragment"
+        android:label="SignUpFragment" />
+
+
 </navigation>

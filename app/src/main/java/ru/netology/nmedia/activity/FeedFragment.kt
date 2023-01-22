@@ -8,12 +8,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.FullImageFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -124,20 +127,28 @@ class FeedFragment : Fragment() {
                     .show()
             }
         }
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            binding.emptyText.isVisible = state.empty
+
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest(adapter::submitData)
         }
 
-        binding.swiperefresh.setOnRefreshListener {
-            viewModel.refreshPosts()
-        }
+        binding.swiperefresh.setOnRefreshListener(adapter::refresh)
 
-        viewModel.newerCount.observe(viewLifecycleOwner) {
-            if (viewModel.newerCount.value!! > 0) {
-                binding.updateFab.isVisible = true
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest { state ->
+                binding.swiperefresh.isRefreshing =
+                    state.refresh is LoadState.Loading ||
+                            state.prepend is LoadState.Loading ||
+                            state.append is LoadState.Loading
             }
         }
+
+//        viewModel.newerCount.observe(viewLifecycleOwner) {
+//            if (viewModel.newerCount.value!! > 0) {
+//                binding.updateFab.isVisible = true
+//            }
+//        }
 
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -154,7 +165,26 @@ class FeedFragment : Fragment() {
 
         var menuProvider: MenuProvider? = null
 
+
         authViewModel.data.observe(viewLifecycleOwner) {
+
+          adapter.refresh()
+
+        //    authViewModel.authentication.value = authViewModel.authorized
+
+            lifecycleScope.launchWhenCreated {
+                viewModel.data.collectLatest(adapter::submitData)
+            }
+
+            lifecycleScope.launchWhenCreated {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.swiperefresh.isRefreshing =
+                        state.refresh is LoadState.Loading ||
+                                state.prepend is LoadState.Loading ||
+                                state.append is LoadState.Loading
+                }
+            }
+
 
             binding.fab.setOnClickListener {
                 if (authViewModel.authorized) {
@@ -205,7 +235,10 @@ class FeedFragment : Fragment() {
                 menuProvider = this
             }, viewLifecycleOwner)
         }
-
+//
+//        authViewModel.authentication.observe(viewLifecycleOwner) {
+//         adapter.refresh()
+//        }
 
 
         return binding.root

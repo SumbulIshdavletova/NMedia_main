@@ -44,6 +44,7 @@ class AppAuth @Inject constructor(
                 clear()
                 apply()
             }
+
         } else {
             _state = MutableStateFlow(AuthState(id, token))
         }

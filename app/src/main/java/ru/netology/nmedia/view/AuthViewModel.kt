@@ -1,6 +1,7 @@
 package ru.netology.nmedia.view
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +18,10 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     val data: LiveData<AuthState?> = auth.state.asLiveData(Dispatchers.Default)
+
+//    val authentication: MutableLiveData<Boolean> by lazy {
+//        MutableLiveData<Boolean>()
+//    }
 
     val authorized: Boolean
         get() = auth.state.value?.id != 0L

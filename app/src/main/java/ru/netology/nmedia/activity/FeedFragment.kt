@@ -128,7 +128,6 @@ class FeedFragment : Fragment() {
             }
         }
 
-
         lifecycleScope.launchWhenCreated {
             viewModel.data.collectLatest(adapter::submitData)
         }
@@ -150,13 +149,13 @@ class FeedFragment : Fragment() {
 //            }
 //        }
 
-        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                if (positionStart == 0) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
-        })
+//        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+//            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+//                if (positionStart == 0) {
+//                    binding.list.smoothScrollToPosition(0)
+//                }
+//            }
+//        })
 
         binding.updateFab.setOnClickListener {
             viewModel.update()
@@ -165,26 +164,24 @@ class FeedFragment : Fragment() {
 
         var menuProvider: MenuProvider? = null
 
-
         authViewModel.data.observe(viewLifecycleOwner) {
 
-          adapter.refresh()
+            adapter.refresh()
 
-        //    authViewModel.authentication.value = authViewModel.authorized
+            //    authViewModel.authentication.value = authViewModel.authorized
 
-            lifecycleScope.launchWhenCreated {
-                viewModel.data.collectLatest(adapter::submitData)
-            }
-
-            lifecycleScope.launchWhenCreated {
-                adapter.loadStateFlow.collectLatest { state ->
-                    binding.swiperefresh.isRefreshing =
-                        state.refresh is LoadState.Loading ||
-                                state.prepend is LoadState.Loading ||
-                                state.append is LoadState.Loading
-                }
-            }
-
+//            lifecycleScope.launchWhenCreated {
+//                viewModel.data.collectLatest(adapter::submitData)
+//            }
+//
+//            lifecycleScope.launchWhenCreated {
+//                adapter.loadStateFlow.collectLatest { state ->
+//                    binding.swiperefresh.isRefreshing =
+//                        state.refresh is LoadState.Loading ||
+//                                state.prepend is LoadState.Loading ||
+//                                state.append is LoadState.Loading
+//                }
+//            }
 
             binding.fab.setOnClickListener {
                 if (authViewModel.authorized) {
@@ -239,7 +236,6 @@ class FeedFragment : Fragment() {
 //        authViewModel.authentication.observe(viewLifecycleOwner) {
 //         adapter.refresh()
 //        }
-
 
         return binding.root
     }

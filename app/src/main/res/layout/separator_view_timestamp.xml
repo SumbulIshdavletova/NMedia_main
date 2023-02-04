@@ -13,6 +13,9 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
+    android:background="@color/cardview_dark_background"
+    android:textColor="@color/cardview_light_background"
+
     />
 
 

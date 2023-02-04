@@ -36,10 +36,15 @@ class PostRepositoryImpl @Inject constructor
     appDb: AppDb
 ) : PostRepository {
 
+    companion object {
+        @RequiresApi(Build.VERSION_CODES.O)
+        val current = OffsetDateTime.now().toEpochSecond()
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalPagingApi::class)
     override val data: Flow<PagingData<FeedItem>> = Pager(
-        config = PagingConfig(pageSize = 25),
+        config = PagingConfig(pageSize = 2),
         remoteMediator = PostRemoteMediator(
             apiService = apiService,
             postDao = postDao,
@@ -49,29 +54,34 @@ class PostRepositoryImpl @Inject constructor
         pagingSourceFactory = postDao::getPagingSource,
     ).flow.map {
 
-        it.map(PostEntity::toDto).insertSeparators { previous, next ->
+        it.map(PostEntity::toDto).insertSeparators { previous: Post?, next: Post? ->
 
-            if (previous?.id?.rem(5) == 0L) {
-                Ad(kotlin.random.Random.nextLong(), "figma.jpg")
-            } else {
-                null
+            var difference1 = 0
+            var difference2 = 0
+            if (previous?.published != null && next?.published != null) {
+                difference1 = current.minus(previous.published).toInt()
+                difference2 = current.minus(next.published).toInt()
             }
-
-            val current = OffsetDateTime.now().toEpochSecond()
-            val difference = previous?.published?.let { it1 -> current.minus(it1) }
-            if (difference != null) {
-                if (difference <= 86400) {
-                    TimingSeparator(kotlin.random.Random.nextLong(), "Today")
-                }
-                if (difference in 86400..172800) {
-                    TimingSeparator(kotlin.random.Random.nextLong(), "Yesterday")
-                }
-                if (difference > 172800)
-                    TimingSeparator(kotlin.random.Random.nextLong(), "Last week")
+            if (next != null && difference1 < 86400 && difference2 < 86400) {
+                TimingSeparator(kotlin.random.Random.nextLong(), "Today")
             } else {
                 null
             }
         }
+//            if (difference1 in 86400..172800 && difference2 in 86400..172800) {
+//                next?.let { it1 -> TimingSeparator(it1.id, "Yesterday") }
+//            } else {
+//                next?.let { it1 -> TimingSeparator(it1.id, "Last week") }
+//            }
+
+
+            .insertSeparators { previous, _ ->
+                if (previous?.id?.rem(5) == 0L) {
+                    Ad(kotlin.random.Random.nextLong(), "figma.jpg")
+                } else {
+                    null
+                }
+            }
     }
 
 

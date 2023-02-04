@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.FullImageFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.adapter.PostLoadingStateAdapter
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -95,10 +96,12 @@ class FeedFragment : Fragment() {
                         textArg = post.attachment?.url
                     })
             }
-
         })
 
-        binding.list.adapter = adapter
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter { adapter.retry() },
+            footer = PostLoadingStateAdapter { adapter.retry() },
+        )
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
@@ -137,14 +140,14 @@ class FeedFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest { state ->
                 binding.swiperefresh.isRefreshing =
-                    state.refresh is LoadState.Loading ||
-                            state.prepend is LoadState.Loading ||
-                            state.append is LoadState.Loading
+                    state.refresh is LoadState.Loading
+//                            state.prepend is LoadState.Loading ||
+//                            state.append is LoadState.Loading
             }
         }
 
 //        viewModel.newerCount.observe(viewLifecycleOwner) {
-//            if (viewModel.newerCount.value!! > 0) {
+//            if (it > 0) {
 //                binding.updateFab.isVisible = true
 //            }
 //        }
@@ -166,22 +169,7 @@ class FeedFragment : Fragment() {
 
         authViewModel.data.observe(viewLifecycleOwner) {
 
-            adapter.refresh()
-
-            //    authViewModel.authentication.value = authViewModel.authorized
-
-//            lifecycleScope.launchWhenCreated {
-//                viewModel.data.collectLatest(adapter::submitData)
-//            }
-//
-//            lifecycleScope.launchWhenCreated {
-//                adapter.loadStateFlow.collectLatest { state ->
-//                    binding.swiperefresh.isRefreshing =
-//                        state.refresh is LoadState.Loading ||
-//                                state.prepend is LoadState.Loading ||
-//                                state.append is LoadState.Loading
-//                }
-//            }
+            //adapter.refresh()
 
             binding.fab.setOnClickListener {
                 if (authViewModel.authorized) {
@@ -232,10 +220,7 @@ class FeedFragment : Fragment() {
                 menuProvider = this
             }, viewLifecycleOwner)
         }
-//
-//        authViewModel.authentication.observe(viewLifecycleOwner) {
-//         adapter.refresh()
-//        }
+
 
         return binding.root
     }

@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
+import java.sql.Timestamp
 
 @Entity
 data class PostEntity(
@@ -14,7 +15,7 @@ data class PostEntity(
     val author: String,
     val authorAvatar: String,
     val content: String,
-    val published: String,
+    val published: Long,
     val likedByMe: Boolean,
     val likes: Int = 0,
     val show: Boolean = true,

@@ -19,7 +19,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
 
     @Inject
     lateinit var auth: AppAuth
-  //  private val viewModel: PostViewModel by viewModels()
+
     @Inject
     lateinit var fcmService: FCMServiceModule
 
@@ -61,25 +61,23 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
     }
 
 
-
     private fun checkGoogleApiAvailability() {
-        if (::fcmService.isInitialized) {
-            with(fcmService.provideGoogleApiAvailability()) {
-                val code = isGooglePlayServicesAvailable(this@AppActivity)
-                if (code == ConnectionResult.SUCCESS) {
-                    return@with
-                }
-                if (isUserResolvableError(code)) {
-                    getErrorDialog(this@AppActivity, code, 9000)?.show()
-                    return
-                }
-                Toast.makeText(
-                    this@AppActivity,
-                    R.string.google_play_unavailable,
-                    Toast.LENGTH_LONG
-                )
-                    .show()
+        with(fcmService.provideGoogleApiAvailability()) {
+            val code = isGooglePlayServicesAvailable(this@AppActivity)
+            if (code == ConnectionResult.SUCCESS) {
+                return@with
             }
+            if (isUserResolvableError(code)) {
+                getErrorDialog(this@AppActivity, code, 9000)?.show()
+                return
+            }
+            Toast.makeText(
+                this@AppActivity,
+                R.string.google_play_unavailable,
+                Toast.LENGTH_LONG
+            )
+                .show()
+
         }
     }
 }

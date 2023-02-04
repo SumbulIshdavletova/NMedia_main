@@ -1,5 +1,7 @@
 package ru.netology.nmedia.repository
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.paging.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -11,10 +13,7 @@ import ru.netology.nmedia.api.*
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dao.PostRemoteKeyDao
 import ru.netology.nmedia.db.AppDb
-import ru.netology.nmedia.dto.Attachment
-import ru.netology.nmedia.dto.AttachmentType
-import ru.netology.nmedia.dto.Media
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.*
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.error.ApiError
@@ -22,6 +21,9 @@ import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import java.io.File
+import java.sql.Timestamp
+import java.time.*
+import java.time.temporal.ChronoField
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,8 +36,9 @@ class PostRepositoryImpl @Inject constructor
     appDb: AppDb
 ) : PostRepository {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalPagingApi::class)
-    override val data: Flow<PagingData<Post>> = Pager(
+    override val data: Flow<PagingData<FeedItem>> = Pager(
         config = PagingConfig(pageSize = 25),
         remoteMediator = PostRemoteMediator(
             apiService = apiService,
@@ -44,7 +47,32 @@ class PostRepositoryImpl @Inject constructor
             appDb = appDb
         ),
         pagingSourceFactory = postDao::getPagingSource,
-    ).flow.map { it.map(PostEntity::toDto) }
+    ).flow.map {
+
+        it.map(PostEntity::toDto).insertSeparators { previous, next ->
+
+            if (previous?.id?.rem(5) == 0L) {
+                Ad(kotlin.random.Random.nextLong(), "figma.jpg")
+            } else {
+                null
+            }
+
+            val current = OffsetDateTime.now().toEpochSecond()
+            val difference = previous?.published?.let { it1 -> current.minus(it1) }
+            if (difference != null) {
+                if (difference <= 86400) {
+                    TimingSeparator(kotlin.random.Random.nextLong(), "Today")
+                }
+                if (difference in 86400..172800) {
+                    TimingSeparator(kotlin.random.Random.nextLong(), "Yesterday")
+                }
+                if (difference > 172800)
+                    TimingSeparator(kotlin.random.Random.nextLong(), "Last week")
+            } else {
+                null
+            }
+        }
+    }
 
 
     override suspend fun getAll() {

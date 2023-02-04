@@ -14,13 +14,11 @@ import javax.inject.Singleton
 class FCMServiceModule  @Inject constructor() {
 
     @Provides
-    @Singleton
     fun provideFirebaseMessaging(): FirebaseMessaging {
         return FirebaseMessaging.getInstance()
     }
 
     @Provides
-    @Singleton
     fun provideGoogleApiAvailability(): GoogleApiAvailability {
         return GoogleApiAvailability.getInstance()
     }

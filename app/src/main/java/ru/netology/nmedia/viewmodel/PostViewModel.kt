@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.db.AppDb
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
@@ -30,8 +31,7 @@ private val empty = Post(
     authorAvatar = "",
     likedByMe = false,
     likes = 0,
-    published = "",
-
+    published = 0
     )
 
 data class PhotoModel(
@@ -40,6 +40,7 @@ data class PhotoModel(
 )
 
 private val noPhoto = PhotoModel(null, null)
+
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -51,12 +52,19 @@ class PostViewModel @Inject constructor(
         .data
         .cachedIn(viewModelScope)
 
-    val data: Flow<PagingData<Post>> = appAuth.state
+
+
+
+    val data: Flow<PagingData<FeedItem>> = appAuth.state
         .map { it?.id }
         .flatMapLatest { id ->
             cached.map { pagingData ->
                 pagingData.map { post ->
-                    post.copy(ownedByMe = post.authorId == id)
+                    if (post is Post) {
+                        post.copy(ownedByMe = post.authorId == id)
+                    } else {
+                        post
+                    }
                 }
             }
         }

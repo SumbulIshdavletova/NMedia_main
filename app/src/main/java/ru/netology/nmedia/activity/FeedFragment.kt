@@ -143,20 +143,6 @@ class FeedFragment : Fragment() {
             }
         }
 
-//        viewModel.newerCount.observe(viewLifecycleOwner) {
-//            if (viewModel.newerCount.value!! > 0) {
-//                binding.updateFab.isVisible = true
-//            }
-//        }
-
-//        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-//            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-//                if (positionStart == 0) {
-//                    binding.list.smoothScrollToPosition(0)
-//                }
-//            }
-//        })
-
         binding.updateFab.setOnClickListener {
             viewModel.update()
             binding.updateFab.isVisible = false
@@ -168,20 +154,6 @@ class FeedFragment : Fragment() {
 
             adapter.refresh()
 
-            //    authViewModel.authentication.value = authViewModel.authorized
-
-//            lifecycleScope.launchWhenCreated {
-//                viewModel.data.collectLatest(adapter::submitData)
-//            }
-//
-//            lifecycleScope.launchWhenCreated {
-//                adapter.loadStateFlow.collectLatest { state ->
-//                    binding.swiperefresh.isRefreshing =
-//                        state.refresh is LoadState.Loading ||
-//                                state.prepend is LoadState.Loading ||
-//                                state.append is LoadState.Loading
-//                }
-//            }
 
             binding.fab.setOnClickListener {
                 if (authViewModel.authorized) {
@@ -232,10 +204,7 @@ class FeedFragment : Fragment() {
                 menuProvider = this
             }, viewLifecycleOwner)
         }
-//
-//        authViewModel.authentication.observe(viewLifecycleOwner) {
-//         adapter.refresh()
-//        }
+
 
         return binding.root
     }

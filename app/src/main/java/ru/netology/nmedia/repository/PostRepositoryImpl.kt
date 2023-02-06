@@ -54,26 +54,7 @@ class PostRepositoryImpl @Inject constructor
         pagingSourceFactory = postDao::getPagingSource,
     ).flow.map {
 
-        it.map(PostEntity::toDto).insertSeparators { previous: Post?, next: Post? ->
-
-            var difference1 = 0
-            var difference2 = 0
-            if (previous?.published != null && next?.published != null) {
-                difference1 = current.minus(previous.published).toInt()
-                difference2 = current.minus(next.published).toInt()
-            }
-            if (next != null && difference1 < 86400 && difference2 < 86400) {
-                TimingSeparator(kotlin.random.Random.nextLong(), "Today")
-            } else {
-                null
-            }
-        }
-//            if (difference1 in 86400..172800 && difference2 in 86400..172800) {
-//                next?.let { it1 -> TimingSeparator(it1.id, "Yesterday") }
-//            } else {
-//                next?.let { it1 -> TimingSeparator(it1.id, "Last week") }
-//            }
-
+        it.map(PostEntity::toDto)
 
             .insertSeparators { previous, _ ->
                 if (previous?.id?.rem(5) == 0L) {
@@ -82,6 +63,26 @@ class PostRepositoryImpl @Inject constructor
                     null
                 }
             }
+
+        it.map(PostEntity::toDto).insertSeparators { previous, next ->
+
+            var difference1 = 0
+            var difference2 = 0
+            if (previous?.published != null && next?.published != null) {
+                difference1 = current.minus(previous.published).toInt()
+                difference2 = current.minus(next.published).toInt()
+            }
+
+
+            if (next != null && difference1 < 86400 && difference2 < 86400) {
+                TimingSeparator(kotlin.random.Random.nextLong(), "Today")
+            }
+            if (next != null && difference1 < 86400 && difference2 in 86400..172800) {
+                TimingSeparator(kotlin.random.Random.nextLong(), "Yesterday")
+            } else {
+                next?.let { it1 -> TimingSeparator(it1.id, "Last week") }
+            }
+    }
     }
 
 
